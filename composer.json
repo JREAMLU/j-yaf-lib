@@ -1,10 +1,4 @@
 {
     "name": "app/j-yaf-lib",
     "description": "j-yaf-lib",
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "git@github.com:JREAMLU/j-yaf-lib.git"
-        }
-    ]
 }

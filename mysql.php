@@ -15,9 +15,9 @@ class Mysql {
     protected $last_sql;
     protected $last_data;
 
-    public static function instance() {
+    public static function instance($db_config) {
         if (!isset(self::$instance)) {
-            self::$instance = new Mysql(Yaf\Application::app()->getConfig()->database->toArray());
+            self::$instance = new Mysql($db_config);
         }
         return self::$instance;
     }
@@ -62,8 +62,8 @@ class Mysql {
                 $dsn .= ";port=$port";
             }
             $dsn .= ";dbname=$name";
-            $conn = new PDO($dsn, $user, $password);
-            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $conn = new \PDO($dsn, $user, $password);
+            $conn->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
             return $conn;
         } catch (PDOException $e) {
@@ -135,7 +135,7 @@ class Mysql {
         }
         try {
             $pdo_connection = $use_master ? $this->getMaster() : $this->getSlave();
-            $pdoDriver = $pdo_connection->getAttribute(PDO::ATTR_DRIVER_NAME);
+            $pdoDriver = $pdo_connection->getAttribute(\PDO::ATTR_DRIVER_NAME);
             $disableLimit = array(
                 "sqlsrv",
                 "mssql",
@@ -156,9 +156,9 @@ class Mysql {
             $pstmt->execute();
 
             if (!is_null($limit) && $limit == 1) {
-                return $pstmt->fetch(PDO::FETCH_ASSOC);
+                return $pstmt->fetch(\PDO::FETCH_ASSOC);
             } else {
-                return $pstmt->fetchAll(PDO::FETCH_ASSOC);
+                return $pstmt->fetchAll(\PDO::FETCH_ASSOC);
             }
         } catch (PDOException $e) {
             if (self::$SHOW_ERR == true) {
@@ -613,7 +613,7 @@ class Mysql {
             $pstmt->execute();
 
             // now return the results
-            return $pstmt->fetchAll(PDO::FETCH_ASSOC);
+            return $pstmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
             if (self::$SHOW_ERR == true) {
                 throw new Exception($e);

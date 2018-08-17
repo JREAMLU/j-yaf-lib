@@ -4,14 +4,22 @@ namespace App\Lib;
 
 class Redisc {
 
+    protected static $instance = null;
     private static $_config;
 
     const REDIS = 'redis';
     const APPLICATION = 'application';
     const CLUSTER = 'cluster';
 
-    public function __construct() {
-        self::$_config = Yaf\Application::app()->getConfig();
+    public static function instance($db_config) {
+        if (!isset(self::$instance)) {
+            self::$instance = new Redisc($db_config);
+        }
+        return self::$instance;
+    }
+
+    public function __construct($db_config) {
+        self::$_config = $db_config;
     }
 
     public static function client($name) {
@@ -23,7 +31,7 @@ class Redisc {
     }
 
     private static function connect($name) {
-        $redis = new Redis();
+        $redis = new \Redis();
         $redis->connect(
             self::$_config[self::APPLICATION][self::REDIS][$name]['host'],
             self::$_config[self::APPLICATION][self::REDIS][$name]['port'],
@@ -39,7 +47,7 @@ class Redisc {
         $hostports = self::$_config[self::APPLICATION][self::REDIS][$name][self::CLUSTER]['hostport'];
         $hostports = array_values($hostports->toArray());
 
-        $redisCluster = new RedisCluster(
+        $redisCluster = new \RedisCluster(
             NULL,
             $hostports,
             self::$_config[self::APPLICATION][self::REDIS][$name][self::CLUSTER]['timeout'],

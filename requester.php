@@ -3,11 +3,6 @@
 namespace App\Lib;
 
 class Requester {
-    public $err;
-
-    public function init() {
-        $this->err = new stdClass();
-    }
 
     /**
      * 单个接口

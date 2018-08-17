@@ -1,4 +1,9 @@
 {
     "name": "app/j-yaf-lib",
-    "description": "j-yaf-lib"
+    "description": "j-yaf-lib",
+    "autoload": {
+        "psr-4": {
+            "App\\Lib\\": ""
+        }
+    }
 }

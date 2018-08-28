@@ -9,6 +9,7 @@ class Common {
         $region = explode('|', $info['region']);
 
         return [
+            'ip' => $ip,
             'city_id' => $info['city_id'],
             'country' => $region[0] == '0' ? '-' : $region[0],
             'area' => $region[1] == '0' ? '-' : $region[1],

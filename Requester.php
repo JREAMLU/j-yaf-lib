@@ -35,10 +35,10 @@ class Requester {
             curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($request['post_data']));
         }
 
-        $json = curl_exec($ch);
+        $resp = curl_exec($ch);
         $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
-        return [json_decode($json, 1), $status];
+        return [json_decode($resp, 1), $status];
     }
 
     /**

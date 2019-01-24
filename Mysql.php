@@ -31,28 +31,28 @@ class Mysql {
         if (isset($this->pdo_master)) {
             throw new Exception('请勿重连主库');
         }
-        $this->config_master = array(
+        $this->config_master = [
             'driver' => $driver,
             'host' => $host,
             'name' => $name,
             'user' => $user,
             'password' => $password,
             'port' => $port,
-        );
+        ];
     }
 
     public function configSlave($host, $name, $user, $password, $port = null, $driver = 'mysql') {
         if (isset($this->pdo_slave)) {
             throw new Exception('请勿重连从库');
         }
-        $this->config_slave = array(
+        $this->config_slave = [
             'driver' => $driver,
             'host' => $host,
             'name' => $name,
             'user' => $user,
             'password' => $password,
             'port' => $port,
-        );
+        ];
     }
 
     protected function createConnection($driver, $host, $name, $user, $password, $port = null) {
@@ -107,7 +107,7 @@ class Mysql {
         $sql_str .= (count($params) > 0 ? ' WHERE ' : '');
         $add_and = false;
         if (empty($params)) {
-            $params = array();
+            $params = [];
         }
         foreach ($params as $key => $val) {
             if ($add_and) {
@@ -136,11 +136,11 @@ class Mysql {
         try {
             $pdo_connection = $use_master ? $this->getMaster() : $this->getSlave();
             $pdoDriver = $pdo_connection->getAttribute(\PDO::ATTR_DRIVER_NAME);
-            $disableLimit = array(
+            $disableLimit = [
                 "sqlsrv",
                 "mssql",
                 "oci",
-            );
+            ];
             if (!is_null($limit) && !in_array($pdoDriver, $disableLimit)) {
                 $sql_str .= ' LIMIT ' . (!is_null($start) ? "$start, " : '') . "$limit";
             }
@@ -186,7 +186,7 @@ class Mysql {
      * @param array $order_by (optional) - an array with order by clause
      * @return mixed - associate representing the fetched table row, false on failure
      */
-    public function selectMaster($table, $params = array(), $limit = null, $start = null, $order_by = null, $break = false) {
+    public function selectMaster($table, $params = [], $limit = null, $start = null, $order_by = null, $break = false) {
         return $this->select($table, $params, $limit, $start, $order_by, true, $break);
     }
 
@@ -199,7 +199,7 @@ class Mysql {
      * @param array $order_by (optional) - an array with order by clause
      * @return mixed - associate representing the fetched table row, false on failure
      */
-    public function selectFirst($table, $params = array(), $order_by = null, $break = false) {
+    public function selectFirst($table, $params = [], $order_by = null, $break = false) {
         return $this->select($table, $params, 1, null, $order_by, false, $break);
     }
 
@@ -212,7 +212,7 @@ class Mysql {
      * @param array $order_by (optional) - an array with order by clause
      * @return mixed - associate representing the fetched table row, false on failure
      */
-    public function selectFirstMaster($table, $params = array(), $order_by = null, $break = false) {
+    public function selectFirstMaster($table, $params = [], $order_by = null, $break = false) {
         return $this->select($table, $params, 1, null, $order_by, true, $break);
     }
 
@@ -224,7 +224,7 @@ class Mysql {
      * @param params - associative array representing the WHERE clause filters
      * @return bool - associate representing the fetched table row, false on failure
      */
-    public function delete($table, $params = array(), $break = false) {
+    public function delete($table, $params = [], $break = false) {
         // building query string
         $sql_str = "DELETE FROM $table";
         // append WHERE if necessary
@@ -285,7 +285,7 @@ class Mysql {
      * @param bool $timestamp_this (Optional) - if true we set date_created and date_modified values to now
      * @return int|bool - the amount of rows updated, false on failure
      */
-    public function update($table, $params, $wheres = array(), $timestamp_this = null, $break = false) {
+    public function update($table, $params, $wheres = [], $timestamp_this = null, $break = false) {
         if (is_null($timestamp_this)) {
             $timestamp_this = self::$TIMESTAMP_WRITES;
         }
@@ -314,7 +314,7 @@ class Mysql {
         $where_string = '';
         if (!empty($wheres)) {
             // load each key value pair, and implode them with an AND
-            $where_array = array();
+            $where_array = [];
             foreach ($wheres as $key => $val) {
                 $where_array[] = "$key=:where_$key";
             }
@@ -344,8 +344,8 @@ class Mysql {
             //LUj 让参数和条件的key 增加 当初绑定时候的前缀
             $tmp_params = $params;
             $tmp_wheres = $wheres;
-            $params = array();
-            $wheres = array();
+            $params = [];
+            $wheres = [];
             foreach ($tmp_params as $key_p => $value_p) {
                 $params['param_' . $key_p] = $value_p;
             }
@@ -385,7 +385,7 @@ class Mysql {
      * @param bool $timestamp_this (Optional), if true we set date_created and date_modified values to now
      * @return mixed - new primary key of inserted table, false on failure
      */
-    public function insert($table, $params = array(), $timestamp_this = null, $break = false) {
+    public function insert($table, $params = [], $timestamp_this = null, $break = false) {
         if (is_null($timestamp_this)) {
             $timestamp_this = self::$TIMESTAMP_WRITES;
         }
@@ -466,7 +466,7 @@ class Mysql {
      * @param bool $timestamp_these (Optional), if true we set date_created and date_modified values to NOW() for each row
      * @return mixed - new primary key of inserted table, false on failure
      */
-    public function insertMultiple($table, $columns = array(), $rows = array(), $timestamp_these = null, $break = false) {
+    public function insertMultiple($table, $columns = [], $rows = [], $timestamp_these = null, $break = false) {
         if (is_null($timestamp_these)) {
             $timestamp_these = self::$TIMESTAMP_WRITES;
         }
@@ -556,7 +556,7 @@ class Mysql {
      * @param bool $use_master (Optional) - whether or not to use the master connection
      * @return mixed - the affected rows, false on failure
      */
-    public function execute($query, $params = array()) {
+    public function execute($query, $params = []) {
         try {
             // use the master connection
             $pdo_connection = $this->getMaster();
@@ -598,7 +598,7 @@ class Mysql {
      * @param bool $use_master (Optional) - whether or not to use the master connection
      * @return mixed - the affected rows, false on failure
      */
-    public function query($query, $params = array(), $use_master = false) {
+    public function query($query, $params = [], $use_master = false) {
         try {
             // decide which database we are selecting from
             $pdo_connection = $use_master ? $this->getMaster() : $this->getSlave();
@@ -638,7 +638,7 @@ class Mysql {
      * @param bool $use_master (Optional) - whether or not to use the master connection
      * @return mixed - the affected rows, false on failure
      */
-    public function queryFirst($query, $params = array(), $use_master = false) {
+    public function queryFirst($query, $params = [], $use_master = false) {
         $result = $this->query($query, $params, $use_master);
         if (empty($result)) {
             return false;
@@ -663,18 +663,42 @@ class Mysql {
         return $this->pdo_exception;
     }
 
+    public function in($params = []) {
+        if (count($params) <= 0) {
+            return false;
+        }
+
+        $rand_placeholder = $this->getRandStr();
+
+        $in = '(';
+        $bind = [];
+        for ($i = 0; $i < count($params); $i++) {
+            $in .= ':' . $rand_placeholder . $i . ',';
+            $bind[':' . $rand_placeholder . $i] = $params[$i];
+        }
+        $in = substr($in, 0, -1);
+        $in .= ')';
+
+        return [$in, $bind];
+    }
+
+    public function getRandStr() {
+        $strs = "QWERTYUIOPASDFGHJKLZXCVBNM1234567890qwertyuiopasdfghjklzxcvbnm";
+        return substr(str_shuffle($strs), mt_rand(0, strlen($strs) - 11), 4);
+    }
+
     /**
      * 打印出pdo 执行的sql语句
      * @param string $query
      * @param array $params
      */
-    public function showQuery($query = '', $params = array()) {
+    public function showQuery($query = '', $params = []) {
         $query = $query == '' ? $this->last_sql : $query;
         $params = empty($params) ? $this->last_data : $params;
 
         //$params 如果绑定参数里有:id 冒号 去除
         $tmp_params = !empty($params) ? $params : [];
-        $params = array();
+        $params = [];
         foreach ($tmp_params as $key => $value) {
             $key_prefix = substr($key, 0, 1);
             if ($key_prefix == ':') {
@@ -683,8 +707,8 @@ class Mysql {
             $params[$key] = $value;
         }
 
-        $keys = array();
-        $values = array();
+        $keys = [];
+        $values = [];
 
         # build a regular expression for each parameter
         foreach ($params as $key => $value) {

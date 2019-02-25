@@ -606,7 +606,7 @@ class Mysql {
 
             // bind each parameter in the array
             foreach ((array) $params as $key => $val) {
-                $pstmt->bindValue($key, $val);
+                $pstmt->bindValue($key, $val, \PDO::PARAM_INT);
             }
 
             // execute the query

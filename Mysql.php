@@ -65,6 +65,10 @@ class Mysql {
             $conn = new \PDO($dsn, $user, $password);
             $conn->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
+            // 查询后大小写
+            $conn->setAttribute(\PDO::ATTR_STRINGIFY_FETCHES, false);
+            $conn->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
+
             return $conn;
         } catch (PDOException $e) {
             return false;

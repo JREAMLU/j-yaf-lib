@@ -410,7 +410,7 @@ class Mysql {
             }
 
             // now append the parameter
-            $columns_str .= "$key";
+            $columns_str .= "`$key`";
             $values_str .= ":$key";
         }
 

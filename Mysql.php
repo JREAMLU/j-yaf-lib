@@ -306,7 +306,7 @@ class Mysql {
             }
 
             // now append the parameter
-            $set_string .= "$key=:param_$key";
+            $set_string .= "`$key`=:param_$key";
         }
 
         // add the timestamp columns if neccessary
@@ -320,7 +320,7 @@ class Mysql {
             // load each key value pair, and implode them with an AND
             $where_array = [];
             foreach ($wheres as $key => $val) {
-                $where_array[] = "$key=:where_$key";
+                $where_array[] = "`$key`=:where_$key";
             }
             // build the final where string
             $where_string = 'WHERE ' . implode(' AND ', $where_array);

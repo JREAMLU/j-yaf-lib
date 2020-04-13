@@ -9,15 +9,15 @@ class Constant {
     const PARAMS_ERROR_CODE = 1001;
     const NOT_LOGIN = 1002;
 
-    const YAF_ERR_NOTFOUND_MODULE = '找不到指定的模块';
-    const YAF_ERR_NOTFOUND_CONTROLLER = '找不到指定的Controller';
-    const YAF_ERR_NOTFOUND_ACTION = '找不到指定的Action';
-    const YAF_ERR_NOTFOUND_VIEW = '找不到指定的视图文件';
+    const YAF_ERR_NOTFOUND_MODULE = 'module not found';
+    const YAF_ERR_NOTFOUND_CONTROLLER = 'controller not found';
+    const YAF_ERR_NOTFOUND_ACTION = 'action not found';
+    const YAF_ERR_NOTFOUND_VIEW = 'view not found';
 
     public static $text = [
-        self::SUCCESS_CODE => '成功',
-        self::SYSTEM_ERROR_CODE => '系统错误',
-        self::PARAMS_ERROR_CODE => '参数错误',
-        self::NOT_LOGIN => '登录态失效',
+        self::SUCCESS_CODE => 'success',
+        self::SYSTEM_ERROR_CODE => 'system error',
+        self::PARAMS_ERROR_CODE => 'params error',
+        self::NOT_LOGIN => 'not login',
     ];
 }

@@ -1,3 +1,4 @@
+
 <?php
 
 namespace App\Lib;
@@ -7,8 +8,6 @@ class Redisc {
     protected static $instance = null;
     private static $_config;
 
-    const REDIS = 'redis';
-    const APPLICATION = 'application';
     const CLUSTER = 'cluster';
 
     public static function instance($db_config) {
@@ -33,28 +32,29 @@ class Redisc {
     private static function connect($name) {
         $redis = new \Redis();
         $redis->connect(
-            self::$_config[self::APPLICATION][self::REDIS][$name]['host'],
-            self::$_config[self::APPLICATION][self::REDIS][$name]['port'],
-            self::$_config[self::APPLICATION][self::REDIS][$name]['timeout'],
+            self::$_config[$name]['host'],
+            self::$_config[$name]['port'],
+            self::$_config[$name]['timeout'],
             NULL,
-            self::$_config[self::APPLICATION][self::REDIS][$name]['reconnect']
+            self::$_config[$name]['reconnect']
         );
 
         return $redis;
     }
 
     private static function connectCluster($name) {
-        $hostports = self::$_config[self::APPLICATION][self::REDIS][$name][self::CLUSTER]['hostport'];
+        $hostports = self::$_config[$name][self::CLUSTER]['hostport'];
         $hostports = array_values($hostports->toArray());
 
         $redisCluster = new \RedisCluster(
             NULL,
             $hostports,
-            self::$_config[self::APPLICATION][self::REDIS][$name][self::CLUSTER]['timeout'],
-            self::$_config[self::APPLICATION][self::REDIS][$name][self::CLUSTER]['readtimeout']
+            self::$_config[$name][self::CLUSTER]['timeout'],
+            self::$_config[$name][self::CLUSTER]['readtimeout']
         );
 
         return $redisCluster;
     }
 
 }
+

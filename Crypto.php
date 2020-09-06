@@ -64,7 +64,7 @@ class Crypto {
 
         $decrypted_data = openssl_decrypt($_data, $this->encrypt_method, $this->encryption_key, OPENSSL_RAW_DATA, $iv);
 
-        $padding = ord($decrypted_data{strlen($decrypted_data) - 1});
+        $padding = ord($decrypted_data[strlen($decrypted_data) - 1]);
 
         if ($padding > strlen($decrypted_data)) {
             return false;

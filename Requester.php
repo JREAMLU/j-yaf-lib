@@ -4,6 +4,9 @@ namespace App\Lib;
 
 class Requester {
 
+    const X_WWW_FORM_URLENCODED = ['Content-Type: application/x-www-form-urlencoded'];
+    const APPLICATION_JSON = ['Content-Type: application/json; charset=utf-8'];
+
     /**
      * 单个接口
      * @param $request['url']
@@ -27,18 +30,25 @@ class Requester {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $request['url']);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); //禁止直接显示获取的内容 重要
-        curl_setopt($ch, CURLOPT_HTTPHEADER, isset($request['header_data']) ? $request['header_data'] : ["Content-Type: application/json; charset=utf-8"]);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, isset($request['header_data']) ? $request['header_data'] : sefl::APPLICATION_JSON);
         curl_setopt($ch, CURLOPT_HEADER, 0);
         curl_setopt($ch, CURLOPT_NOSIGNAL, 1);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $request['method']);
         if (in_array($request['method'], $method)) {
-            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($request['post_data']));
+            switch ($request['header_data']) {
+            case self::APPLICATION_JSON:
+                curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($request['post_data']));
+                break;
+            default:
+                curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($request['post_data']));
+                break;
+            }
         }
 
-        $resp = curl_exec($ch);
+        $json = curl_exec($ch);
         $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
-        return [json_decode($resp, 1), $status];
+        return [json_decode($json, 1), $status];
     }
 
     /**

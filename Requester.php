@@ -2,10 +2,10 @@
 
 namespace App\Lib;
 
-class Requester {
-
-    const X_WWW_FORM_URLENCODED = ['Content-Type: application/x-www-form-urlencoded'];
-    const APPLICATION_JSON = ['Content-Type: application/json; charset=utf-8'];
+class Requester
+{
+    public const X_WWW_FORM_URLENCODED = ['Content-Type: application/x-www-form-urlencoded'];
+    public const APPLICATION_JSON = ['Content-Type: application/json; charset=utf-8'];
 
     /**
      * 单个接口
@@ -14,7 +14,8 @@ class Requester {
      * @param $request['header_data']
      * @param $request['method']
      */
-    public static function Curl($request) {
+    public static function Curl($request)
+    {
         $method = [
             'POST',
             'PUT',
@@ -36,12 +37,12 @@ class Requester {
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $request['method']);
         if (in_array($request['method'], $method)) {
             switch ($request['header_data']) {
-            case self::APPLICATION_JSON:
-                curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($request['post_data']));
-                break;
-            default:
-                curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($request['post_data']));
-                break;
+                case self::APPLICATION_JSON:
+                    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($request['post_data']));
+                    break;
+                default:
+                    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($request['post_data']));
+                    break;
             }
         }
 
@@ -59,7 +60,8 @@ class Requester {
      * @param $requests['header_data']
      * @param $requests['method']
      */
-    public static function RollingCurl($requests) {
+    public static function RollingCurl($requests)
+    {
         $queue = curl_multi_init();
         $map = [];
         $method = [
@@ -96,7 +98,9 @@ class Requester {
         do {
             while (($code = curl_multi_exec($queue, $active)) == CURLM_CALL_MULTI_PERFORM);
 
-            if ($code != CURLM_OK) {break;}
+            if ($code != CURLM_OK) {
+                break;
+            }
 
             // a request was just completed -- find out which one
             while ($done = curl_multi_info_read($queue)) {
@@ -124,18 +128,21 @@ class Requester {
     }
 
     //回调函数
-    public function callback($data) {
+    public function callback($data)
+    {
         preg_match_all('/<h3>(.+)<\/h3>/iU', $data, $matches);
         return compact('data', 'matches');
     }
 
     //生成签名
-    public static function generateMKII($request_data = [], $request_time = "", $secret_key = "") {
+    public static function generateMKII($request_data = [], $request_time = "", $secret_key = "")
+    {
         return strtoupper(md5(sha1(base64_encode(urlencode($secret_key . static::serialize($request_data) . $secret_key . $request_time)))));
     }
 
     //序列化
-    public static function serialize($data) {
+    public static function serialize($data)
+    {
         if (is_array($data)) {
             ksort($data);
             $str = "";

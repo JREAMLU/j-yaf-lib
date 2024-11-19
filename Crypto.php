@@ -2,18 +2,21 @@
 
 namespace App\Lib;
 
-class Crypto {
+class Crypto
+{
     private $encryption_key; // = "0F10F6CB2F5369C14D14FA07BAD302267901240CC8C845DD2C645FBD149A11C9";
     private $validation_key; // = "C985085862F161091EEEFE30F7DC9D62";
     private $encrypt_method;
 
-    public function __construct($encryption_key, $validation_key) {
+    public function __construct($encryption_key, $validation_key)
+    {
         $this->encryption_key = hex2bin($encryption_key);
         $this->validation_key = hex2bin($validation_key);
         $this->encrypt_method = 'AES-256-CBC';
     }
 
-    public function encryptCookie($data = '') {
+    public function encryptCookie($data = '')
+    {
         // 生成IV
         $iv_length = openssl_cipher_iv_length($this->encrypt_method);
         $iv = openssl_random_pseudo_bytes($iv_length, $strong);
@@ -38,7 +41,8 @@ class Crypto {
         return $encrypted_data;
     }
 
-    public function decryptCookie($data = '') {
+    public function decryptCookie($data = '')
+    {
         if (empty($data)) {
             return false;
         }
@@ -76,7 +80,8 @@ class Crypto {
         return substr($decrypted_data, 0, -1 * $padding);
     }
 
-    public function genKey($length = 8) {
+    public function genKey($length = 8)
+    {
         $chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
         $str = '';
         for ($i = 0; $i < $length; $i++) {

@@ -2,9 +2,10 @@
 
 namespace App\Lib;
 
-class Common {
-
-    public function ip2region($ip) {
+class Common
+{
+    public function ip2region($ip)
+    {
         $info = \Ip2region::btreeSearchString($ip);
         $region = explode('|', $info['region']);
 

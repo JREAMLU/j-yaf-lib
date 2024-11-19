@@ -2,8 +2,8 @@
 
 namespace App\Lib;
 
-class Mysql {
-
+class Mysql
+{
     public static $SHOW_ERR = true;
     public static $TIMESTAMP_WRITES = false;
     protected $config_master;
@@ -15,19 +15,22 @@ class Mysql {
     protected $last_sql;
     protected $last_data;
 
-    public static function instance($db_config) {
+    public static function instance($db_config)
+    {
         if (!isset(self::$instance)) {
             self::$instance = new Mysql($db_config);
         }
         return self::$instance;
     }
 
-    public function __construct($db) {
+    public function __construct($db)
+    {
         $this->configMaster($db['master']['hostname'], $db['master']['database'], $db['master']['username'], $db['master']['password'], $db['master']['port'], $db['common']['driver']);
         $this->configSlave($db['slave']['hostname'], $db['slave']['database'], $db['slave']['username'], $db['slave']['password'], $db['slave']['port'], $db['common']['driver']);
     }
 
-    public function configMaster($host, $name, $user, $password, $port = null, $driver = 'mysql') {
+    public function configMaster($host, $name, $user, $password, $port = null, $driver = 'mysql')
+    {
         if (isset($this->pdo_master)) {
             throw new Exception('请勿重连主库');
         }
@@ -41,7 +44,8 @@ class Mysql {
         ];
     }
 
-    public function configSlave($host, $name, $user, $password, $port = null, $driver = 'mysql') {
+    public function configSlave($host, $name, $user, $password, $port = null, $driver = 'mysql')
+    {
         if (isset($this->pdo_slave)) {
             throw new Exception('请勿重连从库');
         }
@@ -55,7 +59,8 @@ class Mysql {
         ];
     }
 
-    protected function createConnection($driver, $host, $name, $user, $password, $port = null) {
+    protected function createConnection($driver, $host, $name, $user, $password, $port = null)
+    {
         try {
             $dsn = $driver . ':host=' . $host;
             if (!empty($port)) {
@@ -77,7 +82,8 @@ class Mysql {
         }
     }
 
-    protected function getMaster() {
+    protected function getMaster()
+    {
 
         if (!isset($this->pdo_master)) {
             $this->pdo_master = $this->createConnection($this->config_master['driver'], $this->config_master['host'], $this->config_master['name'], $this->config_master['user'], $this->config_master['password'], $this->config_master['port']);
@@ -86,7 +92,8 @@ class Mysql {
         return $this->pdo_master;
     }
 
-    protected function getSlave() {
+    protected function getSlave()
+    {
         if (!isset($this->pdo_slave)) {
             $this->pdo_slave = $this->createConnection($this->config_slave['driver'], $this->config_slave['host'], $this->config_slave['name'], $this->config_slave['user'], $this->config_slave['password'], $this->config_slave['port']);
         }
@@ -106,7 +113,8 @@ class Mysql {
      * @param bool $use_master (optional) - use the master db for this read
      * @return mixed - associate representing the fetched table row, false on failure
      */
-    public function select($table, $params = null, $limit = null, $start = null, $order_by = null, $use_master = false, $break = false) {
+    public function select($table, $params = null, $limit = null, $start = null, $order_by = null, $use_master = false, $break = false)
+    {
         $sql_str = "SELECT * FROM $table";
         $sql_str .= (count($params) > 0 ? ' WHERE ' : '');
         $add_and = false;
@@ -190,7 +198,8 @@ class Mysql {
      * @param array $order_by (optional) - an array with order by clause
      * @return mixed - associate representing the fetched table row, false on failure
      */
-    public function selectMaster($table, $params = [], $limit = null, $start = null, $order_by = null, $break = false) {
+    public function selectMaster($table, $params = [], $limit = null, $start = null, $order_by = null, $break = false)
+    {
         return $this->select($table, $params, $limit, $start, $order_by, true, $break);
     }
 
@@ -203,7 +212,8 @@ class Mysql {
      * @param array $order_by (optional) - an array with order by clause
      * @return mixed - associate representing the fetched table row, false on failure
      */
-    public function selectFirst($table, $params = [], $order_by = null, $break = false) {
+    public function selectFirst($table, $params = [], $order_by = null, $break = false)
+    {
         return $this->select($table, $params, 1, null, $order_by, false, $break);
     }
 
@@ -216,7 +226,8 @@ class Mysql {
      * @param array $order_by (optional) - an array with order by clause
      * @return mixed - associate representing the fetched table row, false on failure
      */
-    public function selectFirstMaster($table, $params = [], $order_by = null, $break = false) {
+    public function selectFirstMaster($table, $params = [], $order_by = null, $break = false)
+    {
         return $this->select($table, $params, 1, null, $order_by, true, $break);
     }
 
@@ -228,7 +239,8 @@ class Mysql {
      * @param params - associative array representing the WHERE clause filters
      * @return bool - associate representing the fetched table row, false on failure
      */
-    public function delete($table, $params = [], $break = false) {
+    public function delete($table, $params = [], $break = false)
+    {
         // building query string
         $sql_str = "DELETE FROM $table";
         // append WHERE if necessary
@@ -289,7 +301,8 @@ class Mysql {
      * @param bool $timestamp_this (Optional) - if true we set date_created and date_modified values to now
      * @return int|bool - the amount of rows updated, false on failure
      */
-    public function update($table, $params, $wheres = [], $timestamp_this = null, $break = false) {
+    public function update($table, $params, $wheres = [], $timestamp_this = null, $break = false)
+    {
         if (is_null($timestamp_this)) {
             $timestamp_this = self::$TIMESTAMP_WRITES;
         }
@@ -389,7 +402,8 @@ class Mysql {
      * @param bool $timestamp_this (Optional), if true we set date_created and date_modified values to now
      * @return mixed - new primary key of inserted table, false on failure
      */
-    public function insert($table, $params = [], $timestamp_this = null, $break = false) {
+    public function insert($table, $params = [], $timestamp_this = null, $break = false)
+    {
         if (is_null($timestamp_this)) {
             $timestamp_this = self::$TIMESTAMP_WRITES;
         }
@@ -470,7 +484,8 @@ class Mysql {
      * @param bool $timestamp_these (Optional), if true we set date_created and date_modified values to NOW() for each row
      * @return mixed - new primary key of inserted table, false on failure
      */
-    public function insertMultiple($table, $columns = [], $rows = [], $timestamp_these = null, $break = false) {
+    public function insertMultiple($table, $columns = [], $rows = [], $timestamp_these = null, $break = false)
+    {
         if (is_null($timestamp_these)) {
             $timestamp_these = self::$TIMESTAMP_WRITES;
         }
@@ -560,7 +575,8 @@ class Mysql {
      * @param bool $use_master (Optional) - whether or not to use the master connection
      * @return mixed - the affected rows, false on failure
      */
-    public function execute($query, $params = []) {
+    public function execute($query, $params = [])
+    {
         try {
             // use the master connection
             $pdo_connection = $this->getMaster();
@@ -602,7 +618,8 @@ class Mysql {
      * @param bool $use_master (Optional) - whether or not to use the master connection
      * @return mixed - the affected rows, false on failure
      */
-    public function query($query, $params = [], $use_master = false) {
+    public function query($query, $params = [], $use_master = false)
+    {
         try {
             // decide which database we are selecting from
             $pdo_connection = $use_master ? $this->getMaster() : $this->getSlave();
@@ -642,7 +659,8 @@ class Mysql {
      * @param bool $use_master (Optional) - whether or not to use the master connection
      * @return mixed - the affected rows, false on failure
      */
-    public function queryFirst($query, $params = [], $use_master = false) {
+    public function queryFirst($query, $params = [], $use_master = false)
+    {
         $result = $this->query($query, $params, $use_master);
         if (empty($result)) {
             return false;
@@ -655,7 +673,8 @@ class Mysql {
      * method getErrorMessage.
      * - returns the last error message caught
      */
-    public function getErrorMessage() {
+    public function getErrorMessage()
+    {
         if ($this->pdo_exception) {
             return $this->pdo_exception->getMessage();
         } else {
@@ -663,11 +682,13 @@ class Mysql {
         }
     }
 
-    public function getPDOException() {
+    public function getPDOException()
+    {
         return $this->pdo_exception;
     }
 
-    public function in($params = []) {
+    public function in($params = [])
+    {
         if (count($params) <= 0) {
             return false;
         }
@@ -686,7 +707,8 @@ class Mysql {
         return [$in, $bind];
     }
 
-    public function getRandStr() {
+    public function getRandStr()
+    {
         $strs = "QWERTYUIOPASDFGHJKLZXCVBNM1234567890qwertyuiopasdfghjklzxcvbnm";
         return substr(str_shuffle($strs), mt_rand(0, strlen($strs) - 11), 4);
     }
@@ -696,7 +718,8 @@ class Mysql {
      * @param string $query
      * @param array $params
      */
-    public function showQuery($query = '', $params = []) {
+    public function showQuery($query = '', $params = [])
+    {
         $query = $query == '' ? $this->last_sql : $query;
         $params = empty($params) ? $this->last_data : $params;
 
@@ -733,7 +756,8 @@ class Mysql {
         var_dump($query);
     }
 
-    function __destruct() {
+    public function __destruct()
+    {
         unset($this->pdo_master);
         unset($this->pdo_slave);
     }

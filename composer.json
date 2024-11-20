@@ -2,7 +2,7 @@
     "name": "app/j-yaf-lib",
     "description": "j-yaf-lib",
     "autoload": {
-        "psr-12": {
+        "psr-4": {
             "App\\Lib\\": ""
         }
     }

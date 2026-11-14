@@ -1,4 +1,3 @@
-
 <?php
 
 namespace App\Lib;
@@ -35,28 +34,36 @@ class Redisc
 
     private static function connect($name)
     {
+        $config = self::$_config['redis'][$name];
+
         $redis = new \Redis();
         $redis->connect(
-            self::$_config[$name]['host'],
-            self::$_config[$name]['port'],
-            self::$_config[$name]['timeout'],
+            $config['host'],
+            $config['port'],
+            $config['timeout'],
             null,
-            self::$_config[$name]['reconnect']
+            $config['reconnect']
         );
+
+        // 本地 Redis 开启了密码时执行认证
+        $password = (string) ($config['password'] ?? '');
+        if ($password !== '') {
+            $redis->auth($password);
+        }
 
         return $redis;
     }
 
     private static function connectCluster($name)
     {
-        $hostports = self::$_config[$name][self::CLUSTER]['hostport'];
+        $hostports = self::$_config['redis'][$name][self::CLUSTER]['hostport'];
         $hostports = array_values($hostports->toArray());
 
         $redisCluster = new \RedisCluster(
             null,
             $hostports,
-            self::$_config[$name][self::CLUSTER]['timeout'],
-            self::$_config[$name][self::CLUSTER]['readtimeout']
+            self::$_config['redis'][$name][self::CLUSTER]['timeout'],
+            self::$_config['redis'][$name][self::CLUSTER]['readtimeout']
         );
 
         return $redisCluster;
